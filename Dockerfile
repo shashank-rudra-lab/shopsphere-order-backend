@@ -15,7 +15,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application files
 COPY . .
 
-EXPOSE 8080
+EXPOSE 8082
 
 # Set proper entrypoint
 CMD ["gunicorn", "--bind", "0.0.0.0:8082", "app:app"]
