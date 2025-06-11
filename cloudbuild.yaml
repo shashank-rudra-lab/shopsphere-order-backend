@@ -20,7 +20,7 @@ steps:
       - '-c'
       - |
         gcloud config set project silent-octagon-460701-a0
-        gcloud run deploy product-backend \
+        gcloud run deploy order-backend \
           --image us-central1-docker.pkg.dev/silent-octagon-460701-a0/order-backend/order-backend:$BUILD_ID \
           --region us-central1 \
           --platform managed \
