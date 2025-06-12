@@ -19,9 +19,12 @@ def publish_product_event(product_id, name, price):
         "name": name,
         "price": price
     }
+    print(f"Publishing to PubSub: {data}")
     # Pub/Sub expects bytes
     future = publisher.publish(topic_path, json.dumps(data).encode("utf-8"))
-    return future.result()
+    message_id = future.result()
+    print(f"Published message ID: {message_id}") 
+    return message_id
 
 shipping_progress = {}
 
@@ -74,6 +77,7 @@ def orders():
     name = data.get('name')
     price = data.get('price')
     shipping_progress[product_id] = shipping_progress.get(product_id, 0) + 1
+    
 
     # Publish to Pub/Sub event
     publish_product_event(product_id, name, price)
