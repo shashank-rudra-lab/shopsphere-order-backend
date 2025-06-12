@@ -77,15 +77,24 @@ def orders():
 
     # Publish to Pub/Sub event
     publish_product_event(product_id, name, price)
-    return jsonify({
+
+    # Return POST response with CORS header
+    response = jsonify({
         "status": "success",
         "product_id": product_id,
         "shipping_in_progress": shipping_progress[product_id]
     })
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
 
-
-
-
+@app.route('/orders', methods=['OPTIONS'])
+def options_orders():
+    # Return CORS preflight response
+    response = jsonify({'status': 'OK'})
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+    response.headers.add('Access-Control-Allow-Methods', 'POST, OPTIONS')
+    return response
 
 if __name__ == '__main__':
     app.run(debug=True, port=5004)
