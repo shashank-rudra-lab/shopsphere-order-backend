@@ -77,6 +77,11 @@ def orders():
 
     # Publish to Pub/Sub event
     publish_product_event(product_id, name, price)
+    return jsonify({
+        "status": "success",
+        "product_id": product_id,
+        "shipping_in_progress": shipping_progress[product_id]
+    })
 
 
 
