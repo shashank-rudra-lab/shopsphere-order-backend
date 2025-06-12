@@ -2,8 +2,26 @@ from flask import Flask, render_template, request, jsonify
 import requests
 import threading
 import time
+from google.cloud import pubsub_v1
+import json
 
 app = Flask(__name__)
+
+PROJECT_ID = "silent-octagon-460701-a0"
+TOPIC_ID = "order-event"
+
+publisher = pubsub_v1.PublisherClient()
+topic_path = publisher.topic_path(PROJECT_ID, TOPIC_ID)
+
+def publish_product_event(product_id, name, price):
+    data = {
+        "productId": product_id,
+        "name": name,
+        "price": price
+    }
+    # Pub/Sub expects bytes
+    future = publisher.publish(topic_path, json.dumps(data).encode("utf-8"))
+    return future.result()
 
 shipping_progress = {}
 
@@ -49,6 +67,20 @@ def get_shipping_in_progress():
         for pid, count in shipping_progress.items()
     ]
     return jsonify(result)
+@app.route('/orders', methods=['POST'])
+def orders():
+    data = request.get_json()
+    product_id = data['product_id']
+    name = data.get('name')
+    price = data.get('price')
+    shipping_progress[product_id] = shipping_progress.get(product_id, 0) + 1
+
+    # Publish to Pub/Sub
+    publish_product_event(product_id, name, price)
+
+
+
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=5004)
