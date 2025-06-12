@@ -75,7 +75,7 @@ def orders():
     price = data.get('price')
     shipping_progress[product_id] = shipping_progress.get(product_id, 0) + 1
 
-    # Publish to Pub/Sub
+    # Publish to Pub/Sub event
     publish_product_event(product_id, name, price)
 
 
