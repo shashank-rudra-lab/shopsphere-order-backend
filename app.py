@@ -43,12 +43,16 @@ def index():
     if request.method == 'POST':
         data = request.get_json()
         product_id = data['product_id']
+        name = data.get('name')
+        price = data.get('price')
         shipping_progress[product_id] = shipping_progress.get(product_id, 0) + 1
+        publish_product_event(product_id, name, price)
         return jsonify({
             "status": "success",
             "product_id": product_id,
             "shipping_in_progress": shipping_progress[product_id]
         })
+       
 
     resp = requests.get('https://product-backend-327554758505.us-central1.run.app/products')
     products = resp.json()
@@ -80,7 +84,7 @@ def orders():
     
 
     # Publish to Pub/Sub event
-    publish_product_event(product_id, name, price)
+    
     return jsonify({
         "status": "success",
         "product_id": product_id,
