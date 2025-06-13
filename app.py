@@ -38,7 +38,7 @@ def shipping_worker():
 # Start background thread
 threading.Thread(target=shipping_worker, daemon=True).start()
 
-@app.route('/orders', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
         data = request.get_json()
