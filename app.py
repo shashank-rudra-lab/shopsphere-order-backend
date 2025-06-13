@@ -74,7 +74,7 @@ def get_shipping_in_progress():
         for pid, count in shipping_progress.items()
     ]
     return jsonify(result)
-@app.route('/orders', methods=['POST'])
+@app.route('/orders', methods=['GET', 'POST'])
 def orders():
     if request.method == 'POST':
         data = request.get_json()
