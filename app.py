@@ -39,7 +39,43 @@ def shipping_worker():
 threading.Thread(target=shipping_worker, daemon=True).start()
 
 @app.route('/', methods=['GET', 'POST'])
-def index():
+#def index():
+    # if request.method == 'POST':
+    #     data = request.get_json()
+    #     product_id = data['product_id']
+    #     name = data.get('name')
+    #     price = data.get('price')
+    #     shipping_progress[product_id] = shipping_progress.get(product_id, 0) + 1
+    #     publish_product_event(product_id, name, price)
+    #     return jsonify({
+    #         "status": "success",
+    #         "product_id": product_id,
+    #         "shipping_in_progress": shipping_progress[product_id]
+    #     })
+       
+
+    # resp = requests.get('https://product-backend-327554758505.us-central1.run.app/products')
+    # products = resp.json()
+    # orders = [
+    #     {
+    #         "product_id": p.get('product_id'),
+    #         "product_name": p.get('name'),
+    #         "shipping_in_progress": shipping_progress.get(p.get('product_id'), 0)
+    #     }
+    #     for p in products
+    # ]
+    # return render_template('index.html', orders=orders)
+
+@app.route('/shipping_in_progress', methods=['GET'])
+def get_shipping_in_progress():
+    # Returns a list of dicts with product_id and shipping in progress
+    result = [
+        {"product_id": pid, "shipping_in_progress": count}
+        for pid, count in shipping_progress.items()
+    ]
+    return jsonify(result)
+@app.route('/orders', methods=['POST'])
+def orders():
     if request.method == 'POST':
         data = request.get_json()
         product_id = data['product_id']
@@ -52,8 +88,6 @@ def index():
             "product_id": product_id,
             "shipping_in_progress": shipping_progress[product_id]
         })
-       
-
     resp = requests.get('https://product-backend-327554758505.us-central1.run.app/products')
     products = resp.json()
     orders = [
@@ -65,31 +99,6 @@ def index():
         for p in products
     ]
     return render_template('index.html', orders=orders)
-
-@app.route('/shipping_in_progress', methods=['GET'])
-def get_shipping_in_progress():
-    # Returns a list of dicts with product_id and shipping in progress
-    result = [
-        {"product_id": pid, "shipping_in_progress": count}
-        for pid, count in shipping_progress.items()
-    ]
-    return jsonify(result)
-@app.route('/orders', methods=['POST'])
-def orders():
-    data = request.get_json()
-    product_id = data['product_id']
-    name = data.get('name')
-    price = data.get('price')
-    shipping_progress[product_id] = shipping_progress.get(product_id, 0) + 1
-    
-
-    # Publish to Pub/Sub event
-    
-    return jsonify({
-        "status": "success",
-        "product_id": product_id,
-        "shipping_in_progress": shipping_progress[product_id]
-    })
 
 
 
