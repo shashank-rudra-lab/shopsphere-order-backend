@@ -38,7 +38,7 @@ def shipping_worker():
 # Start background thread
 threading.Thread(target=shipping_worker, daemon=True).start()
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/orders', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
         data = request.get_json()
@@ -72,22 +72,22 @@ def get_shipping_in_progress():
         for pid, count in shipping_progress.items()
     ]
     return jsonify(result)
-@app.route('/orders', methods=['POST'])
-def orders():
-    data = request.get_json()
-    product_id = data['product_id']
-    name = data.get('name')
-    price = data.get('price')
-    shipping_progress[product_id] = shipping_progress.get(product_id, 0) + 1
+# @app.route('/orders', methods=['POST'])
+# def orders():
+#     data = request.get_json()
+#     product_id = data['product_id']
+#     name = data.get('name')
+#     price = data.get('price')
+#     shipping_progress[product_id] = shipping_progress.get(product_id, 0) + 1
     
 
-    # Publish to Pub/Sub event
+#     # Publish to Pub/Sub event
     
-    return jsonify({
-        "status": "success",
-        "product_id": product_id,
-        "shipping_in_progress": shipping_progress[product_id]
-    })
+#     return jsonify({
+#         "status": "success",
+#         "product_id": product_id,
+#         "shipping_in_progress": shipping_progress[product_id]
+#     })
 
 
 
